@@ -1,0 +1,5 @@
+.phpunit.cache
+composer.lock
+coverage.txt
+vendor
+

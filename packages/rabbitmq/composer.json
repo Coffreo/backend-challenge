@@ -1,0 +1,25 @@
+{
+  "name": "internals/rabbitmq",
+  "version": "0.1.0",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Internals\\RabbitMq\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Internals\\RabbitMq\\Tests\\": "tests"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "require": {
+    "php-amqplib/php-amqplib": "^3.6",
+    "psr/log": "^3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11"
+  }
+}

@@ -1,0 +1,12 @@
+# Apple
+.DS_Store
+
+# Bundle
+test-technique-tfay.zip
+
+# Environment
+.env*
+!.env.dev.example
+
+# Windows
+Thumbs.db

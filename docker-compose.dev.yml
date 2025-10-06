@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  capital-worker:
+    build:
+      context: .
+      dockerfile: modules/capital-worker/Dockerfile
+    container_name: capital_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  country-worker:
+    build:
+      context: .
+      dockerfile: modules/country-worker/Dockerfile
+    container_name: country_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    ports:
+      - 9999:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'
