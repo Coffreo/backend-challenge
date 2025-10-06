@@ -8,7 +8,7 @@ Ce projet contient actuellement deux workers qui communiquent via RabbitMQ :
 - **country-worker** : récupère la capitale d'un pays via l'API restcountries.com
 - **capital-worker** : traite les messages contenant des capitales
 
-[Accéder à la documentation du projet](#DOC.md)
+[Accéder à la documentation du projet](./DOC.md)
 
 
 ## Objectif du test
