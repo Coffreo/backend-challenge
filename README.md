@@ -169,22 +169,6 @@ Ajouter les nouveaux services dans `docker-compose.dev.yml` pour :
 - output-worker
 - api-weather (port 8080)
 
-## Variables d'environnement
-
-Ajouter dans `.env.dev` :
-
-```properties
-# Queues existantes
-RABBITMQ_QUEUE_CAPITALS=capitals
-RABBITMQ_QUEUE_COUNTRIES=countries
-
-# Nouvelles queues
-RABBITMQ_QUEUE_INPUT=input
-RABBITMQ_QUEUE_WEATHER_RESULTS=weather_results
-
-# API Weather
-API_WEATHER_URL=http://api-weather:8080
-```
 
 ## Commandes utiles
 
