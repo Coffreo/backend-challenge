@@ -18,7 +18,7 @@ Vous devez étendre ce système en ajoutant **deux nouveaux workers** et en cré
 ### Architecture finale attendue
 
 ```
-input-worker → country-worker → capital-worker → weather-worker → output-worker
+input-worker → country-worker → capital-worker → weather-worker → output
 ```
 
 ## Consignes détaillées
@@ -232,6 +232,9 @@ curl http://localhost:8080/health
 - [ ] Gestion des cas d'erreur (API indisponible, message malformé)
 - [ ] Logs informatifs
 - [ ] Health checks
+
+### 🎁 Bonus (optionnel)
+- [ ] **Proxy météo** : Créer un endpoint proxy dans l'API météo qui appelle une vraie API météo externe (ex: OpenWeatherMap) et mappe le retour vers le format attendu.
 
 ## Livrables attendus
 
