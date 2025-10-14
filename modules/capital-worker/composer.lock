@@ -74,16 +74,24 @@
             "dist": {
                 "type": "path",
                 "url": "../../packages/rabbitmq",
-                "reference": "0e4419ef3e492004f6e31f09b9cb7aab331f4aec"
+                "reference": "17ce6fd953ac46b6a55bb8db32e2e7acb9a6cd57"
             },
             "require": {
                 "php-amqplib/php-amqplib": "^3.6",
                 "psr/log": "^3.0"
             },
+            "require-dev": {
+                "phpunit/phpunit": "^11"
+            },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Internals\\RabbitMq\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Internals\\RabbitMq\\Tests\\": "tests"
                 }
             },
             "transport-options": {
@@ -952,10 +960,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

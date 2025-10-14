@@ -13,7 +13,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /app/modules/worker
 
-COPY ./modules/capital-worker /app/modules/worker
+COPY ./modules/input-worker /app/modules/worker
 COPY ./packages /app/packages
 
 RUN rm -rf /app/modules/worker/vendor

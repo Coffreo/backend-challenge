@@ -32,14 +32,21 @@ class RabbitMqPublisher
      *
      * @param string $queue The queue the message will be pushed on.
      * @param string $messageBody Contents of the so-called message.
+     * @param array $messageProperties Optional AMQP message properties (correlation_id, reply_to, etc.)
      */
-    public function publish(string $queue, string $messageBody): void
+    public function publish(string $queue, string $messageBody, array $messageProperties = []): void
     {
-        /** @var AMQPMessage */
-        $message = new AMQPMessage($messageBody, [
+        // Default properties
+        $defaultProperties = [
             "content_type" => "text/plain",
             "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT
-        ]);
+        ];
+
+        // Merge with custom properties (custom properties override defaults)
+        $properties = array_merge($defaultProperties, $messageProperties);
+
+        /** @var AMQPMessage */
+        $message = new AMQPMessage($messageBody, $properties);
 
         /** @var string */
         $exchange = 'router';
@@ -53,8 +60,12 @@ class RabbitMqPublisher
                 ]));
 
                 $channel->exchange_declare($exchange, AMQPExchangeType::DIRECT, false, true, false);
-                $channel->queue_bind($queue, $exchange);
-                $channel->basic_publish($message, $exchange);
+
+                // Use queue-specific routing key to ensure messages are delivered only to the intended queue
+                // Without this, all queues bound to the same exchange would receive the same message
+                $routingKey = $queue . '_routing_key';
+                $channel->queue_bind($queue, $exchange, $routingKey);
+                $channel->basic_publish($message, $exchange, $routingKey);
             }
         );
 

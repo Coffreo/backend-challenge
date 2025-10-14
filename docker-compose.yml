@@ -3,52 +3,47 @@ services:
     build:
       context: .
       dockerfile: modules/capital-worker/Dockerfile
-      target: worker_dev
+      target: worker_prod
     container_name: capital_worker
     depends_on:
       - rabbitmq
     env_file:
       - path: ./.env.dev
         required: true
-    restart: unless-stopped
-    stop_grace_period: 2s
-    volumes:
-      - ./modules/capital-worker:/app/modules/worker
-      - ./packages:/app/packages
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+
+    restart: always
 
   country-worker:
     build:
       context: .
       dockerfile: modules/country-worker/Dockerfile
-      target: worker_dev
+      target: worker_prod
     container_name: country_worker
     depends_on:
       - rabbitmq
     env_file:
       - path: ./.env.dev
         required: true
-    restart: unless-stopped
-    stop_grace_period: 2s
-    volumes:
-      - ./modules/country-worker:/app/modules/worker
-      - ./packages:/app/packages
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
 
   input-worker:
     build:
       context: .
       dockerfile: modules/input-worker/Dockerfile
-      target: worker_dev
+      target: worker_prod
     container_name: input_worker
     depends_on:
       - rabbitmq
     env_file:
       - path: ./.env.dev
         required: true
-    restart: unless-stopped
-    stop_grace_period: 2s
-    volumes:
-      - ./modules/input-worker:/app/modules/worker
-      - ./packages:/app/packages
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
 
   dozzle:
     container_name: dozzle
