@@ -136,7 +136,7 @@ class MessageHandler implements IRabbitMqMessageHandler
      */
     protected function publishToCapitals(string $value): void
     {
-        $message = json_encode(['capital_name' => $value]);
+        $message = json_encode(['capital' => $value]);
         $this->publisher->publish(QUEUE_CAPITALS, $message);
     }
 

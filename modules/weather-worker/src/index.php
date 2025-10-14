@@ -12,10 +12,18 @@ use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-define('WORKER_ID', uniqid('worker-capitals'));
+define('API_WEATHER_BASE_URI', $_ENV['API_WEATHER_BASE_URI']);
 
-define('QUEUE_IN', $_ENV['RABBITMQ_QUEUE_CAPITALS']);
-define('QUEUE_OUT', $_ENV['RABBITMQ_QUEUE_CAPITALS_PROCESSED']);
+/**
+ * In an ideal word, we'd have assigned an unique worker id, as we are able
+ * to have multiple workers doing the same task.
+ * Here, it is represented as a uniqid, but we may expect some orchestrator
+ * managing this, behind.
+ */
+define('WORKER_ID', uniqid('worker-weather'));
+
+define('QUEUE_IN', $_ENV['RABBITMQ_QUEUE_CAPITALS_PROCESSED']);
+define('QUEUE_OUT', $_ENV['RABBITMQ_QUEUE_WEATHER_RESULTS']);
 
 /** @var Logger */
 $logger = new Logger(WORKER_ID);

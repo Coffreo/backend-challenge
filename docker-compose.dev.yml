@@ -50,6 +50,54 @@ services:
       - ./modules/input-worker:/app/modules/worker
       - ./packages:/app/packages
 
+  weather-worker:
+    build:
+      context: .
+      dockerfile: modules/weather-worker/Dockerfile
+      target: worker_dev
+    container_name: weather_worker
+    depends_on:
+      - rabbitmq
+      - api-weather
+    env_file:
+      - path: ./.env.dev
+        required: true
+    restart: unless-stopped
+    stop_grace_period: 2s
+    volumes:
+      - ./modules/weather-worker:/app/modules/worker
+      - ./packages:/app/packages
+
+  output-worker:
+    build:
+      context: .
+      dockerfile: modules/output-worker/Dockerfile
+      target: worker_dev
+    container_name: output_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    restart: unless-stopped
+    stop_grace_period: 2s
+    volumes:
+      - ./modules/output-worker:/app/modules/worker
+      - ./packages:/app/packages
+
+  api-weather:
+    build:
+      context: .
+      dockerfile: modules/api-weather/Dockerfile
+      target: api_dev
+    container_name: api_weather
+    ports:
+      - '8080:80'
+    restart: unless-stopped
+    stop_grace_period: 2s
+    volumes:
+      - ./modules/api-weather:/app
+
   dozzle:
     container_name: dozzle
     image: amir20/dozzle:latest

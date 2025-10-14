@@ -61,12 +61,6 @@ Par commodité, un `devcontainer` est fourni avec le projet, permettant de déve
 
 ## Environnement optimisé pour le Dev
 
-Pour un développement plus efficace, utilisez l'environnement de développement optimisé :
-
-```sh
-docker-compose -f docker-compose.dev.yml up -d --build
-```
-
 ### Fonctionnalités
 
 L'environnement de développement offre plusieurs avantages :
@@ -81,7 +75,7 @@ Lorsque vous modifiez un package dans le dossier `packages/` (comme `rabbitmq`),
 
 ```sh
 # Mettre à jour le package internals/rabbitmq sur tous les projets
-./update-rabbitmq-package.sh
+./scripts/update-rabbitmq-package.sh
 ```
 
 ### Commandes utiles
@@ -97,13 +91,16 @@ docker compose -f docker-compose.dev.yml down
 docker compose -f docker-compose.dev.yml logs -f
 
 # Lancer les tests
-docker compose -f docker-compose.dev.yml exec country-worker php vendor/bin/phpunit
-docker compose -f docker-compose.dev.yml exec capital-worker php vendor/bin/phpunit
-docker compose -f docker-compose.dev.yml exec input-worker php vendor/bin/phpunit
+docker compose -f docker-compose.dev.yml exec country-worker composer test
+docker compose -f docker-compose.dev.yml exec capital-worker composer test
+docker compose -f docker-compose.dev.yml exec input-worker composer test
+docker compose -f docker-compose.dev.yml exec weather-worker composer test
+docker compose -f docker-compose.dev.yml exec output-worker composer test
+docker compose -f docker-compose.dev.yml exec api-weather composer test
 
 # Lancer un test E2E
-curl -u guest:guest -H "Content-Type: application/json" -X POST \
-  -d '{"properties":{},"routing_key":"input","payload":"{\"value\":\"France\"}","payload_encoding":"string"}' \
-  http://localhost:15672/api/exchanges/%2F/amq.default/publish
+./scripts/test-e2e.sh Italy
+./scripts/test-e2e.sh Madrid
+
 
 ```

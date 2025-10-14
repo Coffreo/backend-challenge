@@ -200,8 +200,13 @@ class MessageHandler implements IRabbitMqMessageHandler
     public function publishCapital(string $capital): void
     {
         try {
+            $message = [
+                'capital' => $capital,
+                'country' => $this->countryName
+            ];
+
             (new RabbitMqPublisher($this->rabbitMqConnection, $this->logger))
-                ->publish(QUEUE_OUT, $capital);
+                ->publish(QUEUE_OUT, json_encode($message));
         } catch (\Exception $e) {
             throw new MessageHandlerException($e->getMessage());
         }

@@ -6,7 +6,7 @@
 set -e
 
 # Array of project containers
-PROJECTS=("input-worker" "country-worker" "capital-worker")
+PROJECTS=("input-worker" "country-worker" "capital-worker" "weather-worker" "output-worker")
 
 echo "Updating internals/rabbitmq package across all projects..."
 
