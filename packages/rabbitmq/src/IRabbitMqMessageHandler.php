@@ -6,6 +6,6 @@ namespace Internals\RabbitMq;
 
 interface IRabbitMqMessageHandler
 {
-    public function validate(string $messageBody): bool;
-    public function consume(string $messageBody): bool;
+    public function validate(string $messageBody, array $properties): bool;
+    public function consume(string $messageBody, array $properties): bool;
 }

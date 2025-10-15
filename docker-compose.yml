@@ -1,0 +1,105 @@
+services:
+  capital-worker:
+    build:
+      context: .
+      dockerfile: modules/capital-worker/Dockerfile
+      target: worker_prod
+    container_name: capital_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+
+    restart: always
+
+  country-worker:
+    build:
+      context: .
+      dockerfile: modules/country-worker/Dockerfile
+      target: worker_prod
+    container_name: country_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  input-worker:
+    build:
+      context: .
+      dockerfile: modules/input-worker/Dockerfile
+      target: worker_prod
+    container_name: input_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  weather-worker:
+    build:
+      context: .
+      dockerfile: modules/weather-worker/Dockerfile
+      target: worker_prod
+    container_name: weather_worker
+    depends_on:
+      - rabbitmq
+      - api-weather
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  output-worker:
+    build:
+      context: .
+      dockerfile: modules/output-worker/Dockerfile
+      target: worker_prod
+    container_name: output_worker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - path: ./.env.dev
+        required: true
+    environment:
+      - RABBITMQ_HOST=host.docker.internal
+    restart: always
+
+  api-weather:
+    build:
+      context: .
+      dockerfile: modules/api-weather/Dockerfile
+      target: api_prod
+    container_name: api_weather
+    env_file:
+      - path: ./.env.dev
+        required: true
+    ports:
+      - '8080:80'
+    restart: always
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    ports:
+      - 9999:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'

@@ -24,6 +24,7 @@ define('WORKER_ID', uniqid('worker-country'));
 
 define('QUEUE_IN', $_ENV['RABBITMQ_QUEUE_COUNTRIES']);
 define('QUEUE_OUT', $_ENV['RABBITMQ_QUEUE_CAPITALS']);
+define('QUEUE_RESPONSES', $_ENV['RABBITMQ_QUEUE_COUNTRIES_RESPONSES']);
 
 /** @var Logger */
 $logger = new Logger(WORKER_ID);

@@ -15,6 +15,7 @@ use Monolog\Handler\StreamHandler;
 define('WORKER_ID', uniqid('worker-capitals'));
 
 define('QUEUE_IN', $_ENV['RABBITMQ_QUEUE_CAPITALS']);
+define('QUEUE_OUT', $_ENV['RABBITMQ_QUEUE_CAPITALS_PROCESSED']);
 
 /** @var Logger */
 $logger = new Logger(WORKER_ID);
@@ -30,7 +31,7 @@ try {
     $rabbitMqConnection->connect();
 
     (new RabbitMqConsumer(WORKER_ID, $rabbitMqConnection, $logger))
-        ->listen(QUEUE_IN, new MessageHandler($logger));
+        ->listen(QUEUE_IN, new MessageHandler($rabbitMqConnection, $logger));
 } catch (\Exception $e) {
     // We know that wa got a fatal error level at this point.
     // Thus, it helps detecting edge cases.
