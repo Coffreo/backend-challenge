@@ -25,7 +25,7 @@ input-worker → country-worker → capital-worker → weather-worker → output
 
 ### 1. Créer une API météo (api-weather)
 
-**Technologies** : PHP (framework Symfony autorisé) 
+**Technologies** : PHP (framework Symfony autorisé)
 
 **Endpoints à implémenter** :
 
@@ -165,38 +165,80 @@ modules/
 
 Ajouter les nouveaux services dans `docker-compose.dev.yml` pour :
 - input-worker
-- weather-worker  
+- weather-worker
 - output-worker
 - api-weather (port 8080)
 
 
 ## Commandes utiles
 
-```bash
-# Démarrer l'environnement
-make up
+```sh
+# Démarrer l'environnement de développement
+docker compose -f docker-compose.dev.yml up -d --build
 
-# Envoyer un message de test
-make test-message
+# Arrêter l'environnement de développement
+docker compose -f docker-compose.dev.yml down
 
-# Arrêter l'environnement
-make down
+# Voir les logs en temps réel
+docker compose -f docker-compose.dev.yml logs -f
+
+
+```
+
+### Interfaces de monitoring
+
+- **Dozzle (logs)** : http://localhost:9999/
+- **RabbitMQ Management** : http://localhost:15672/ (guest/guest)
+- **API Météo** : http://localhost:8080/
+
+## Environnement de développement
+
+### Fonctionnalités
+
+L'environnement de développement offre plusieurs avantages :
+
+- **Hot Reload automatique** : Les workers redémarrent automatiquement via `watchexec` lors de modifications des fichiers PHP dans `src/`
+- **Volumes partagés** : Les modifications sur l'host sont immédiatement propagées dans les containers
+- **Vendor persistant** : Les dépendances composer installées dans le container sont accessibles depuis l'host
+- **Devcontainer** : Un environnement dockerisé prêt à l'emploi pour développer confortablement
+
+### Mise à jour des packages partagés
+
+Lorsque vous modifiez un package dans le dossier `packages/` (comme `rabbitmq`), utilisez le script fourni pour mettre à jour tous les projets :
+
+```sh
+# Mettre à jour le package internals/rabbitmq sur tous les projets
+./scripts/update-rabbitmq-package.sh
 ```
 
 ## Tests
 
 ### Test du pipeline complet
 
-1. Démarrer tous les services : `make up`
-2. Envoyer un message de test : `make test-message`
-3. Vérifier dans les logs que le message traverse tous les workers
-4. Vérifier que le message final contient les données météo
+1. Démarrer tous les services : `docker compose -f docker-compose.dev.yml up -d`
+2. Envoyer un message de test : `./scripts/test-e2e.sh France` ou `./scripts/test-e2e.sh Madrid`
+3. Suivre les logs du pipeline avec le filtre `challenge-pipeline` dans **Dozzle** (http://localhost:9999/) pour tracer les étapes principales du pipeline
+4. Vérifier que le message final contient les données météo dans **output-worker**
 
-**Alternative** : Envoyer manuellement via l'interface RabbitMQ (Exchange `amq.default`, routing key `input`) :
+**Alternative** : Envoyer manuellement via l'interface **RabbitMQ Management** (http://localhost:15672/) :
+- Exchange : `amq.default`
+- Routing key : `input`
+- Payload :
 ```json
 {
   "value": "France"
 }
+```
+
+### Tests unitaires
+
+```bash
+# Lancer les tests unitaires par module
+docker compose -f docker-compose.dev.yml exec country-worker composer test
+docker compose -f docker-compose.dev.yml exec input-worker composer test
+docker compose -f docker-compose.dev.yml exec weather-worker composer test
+docker compose -f docker-compose.dev.yml exec output-worker composer test
+docker compose -f docker-compose.dev.yml exec api-weather composer test
 ```
 
 ### Test de l'API météo
@@ -205,7 +247,18 @@ make down
 # Test direct de l'API
 curl http://localhost:8080/api/weather/Paris
 curl http://localhost:8080/health
+
+# Test E2E du pipeline complet
+./scripts/test-e2e.sh Italy
+./scripts/test-e2e.sh Madrid
 ```
+
+### Suivi des logs
+
+Pour suivre efficacement le pipeline dans **Dozzle** :
+- Accéder à http://localhost:9999/
+- Utiliser le filtre `challenge-pipeline` pour tracer les étapes principales du pipeline
+- Observer la progression : input-worker → country-worker → capital-worker → weather-worker → output-worker
 
 ## Critères d'évaluation
 

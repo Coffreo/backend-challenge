@@ -91,6 +91,9 @@ services:
       dockerfile: modules/api-weather/Dockerfile
       target: api_dev
     container_name: api_weather
+    env_file:
+      - path: ./.env.dev
+        required: true
     ports:
       - '8080:80'
     restart: unless-stopped

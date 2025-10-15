@@ -49,12 +49,18 @@ class MessageHandler implements IRabbitMqMessageHandler
     public function consume(string $payload, array $properties): bool
     {
         try {
+            // Validate JSON structure first
+            json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+            
             $this->logger->info("[challenge-pipeline] Step 5/5: Final result ready");
 
             // Log pipeline result
             $this->logger->info("[challenge-pipeline] End: Pipeline completed successfully {$payload}");
 
             return true;
+        } catch (\JsonException $e) {
+            $this->logger->error('Invalid JSON in final message: ' . $e->getMessage());
+            return false;
         } catch (\Exception $e) {
             $this->logger->error('Failed to process final weather message: ' . $e->getMessage());
             return false;

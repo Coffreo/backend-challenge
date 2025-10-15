@@ -27,15 +27,15 @@ make up
 ou bien, si vous n'avez pas `Make` :
 
 ```sh
-docker-compose up -d --build
+docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
 *That's all, folks!*
 
-Stoppez le conteneur avec `make down`, ou bien utilisez la commande suivante :
+Stoppez le conteneur avec `make down`, ou bien utilisez la commande suivante : 
 
 ```sh
-docker-compose down
+docker-compose -f docker-compose.dev.yml down
 ```
 
 En plus des deux *workers*, deux modules ont été apportés pour permettre un *monitoring* et un *test* plus efficaces, et confortables :
@@ -58,49 +58,3 @@ Vous pouvez arrêter les conteneurs à l'envi : les *workers* essaieront de se r
 ## Développement
 
 Par commodité, un `devcontainer` est fourni avec le projet, permettant de développer dans un environnement dockerisé, prêt à l'emploi et équipé du matériel nécessaire pour coder confortablement.
-
-## Environnement optimisé pour le Dev
-
-### Fonctionnalités
-
-L'environnement de développement offre plusieurs avantages :
-
-- **Hot Reload automatique** : Les workers redémarrent automatiquement via `watchexec` lors de modifications des fichiers PHP dans `src/`
-- **Volumes partagés** : Les modifications sur l'host sont immédiatement propagées dans les containers
-- **Vendor persistant** : Les dépendances composer installées dans le container sont accessibles depuis l'host
-
-### Mise à jour des packages partagés
-
-Lorsque vous modifiez un package dans le dossier `packages/` (comme `rabbitmq`), utilisez le script fourni pour mettre à jour tous les projets :
-
-```sh
-# Mettre à jour le package internals/rabbitmq sur tous les projets
-./scripts/update-rabbitmq-package.sh
-```
-
-### Commandes utiles
-
-```sh
-# Démarrer l'environnement de développement
-docker compose -f docker-compose.dev.yml up -d --build
-
-# Arrêter l'environnement de développement
-docker compose -f docker-compose.dev.yml down
-
-# Voir les logs en temps réel
-docker compose -f docker-compose.dev.yml logs -f
-
-# Lancer les tests
-docker compose -f docker-compose.dev.yml exec country-worker composer test
-docker compose -f docker-compose.dev.yml exec capital-worker composer test
-docker compose -f docker-compose.dev.yml exec input-worker composer test
-docker compose -f docker-compose.dev.yml exec weather-worker composer test
-docker compose -f docker-compose.dev.yml exec output-worker composer test
-docker compose -f docker-compose.dev.yml exec api-weather composer test
-
-# Lancer un test E2E
-./scripts/test-e2e.sh Italy
-./scripts/test-e2e.sh Madrid
-
-
-```

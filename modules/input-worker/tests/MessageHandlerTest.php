@@ -159,7 +159,7 @@ class MessageHandlerTest extends TestCase
 
         $this->publisherMock->expects($this->once())
             ->method('publish')
-            ->with(QUEUE_CAPITALS, '{"capital_name":"Paris"}');
+            ->with(QUEUE_CAPITALS, '{"capital":"Paris"}');
 
         $handler->republishToCapitals('Paris');
     }
