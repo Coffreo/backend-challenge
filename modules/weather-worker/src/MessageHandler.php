@@ -88,7 +88,7 @@ class MessageHandler implements IRabbitMqMessageHandler
 
         try {
             $response = $this->httpClient
-                ->request('GET', 'api/weather/' . urlencode($this->capital), [
+                ->request('GET', 'api/weather/external/' . urlencode($this->capital), [
                     'allow_redirects' => false,
                     'connect_timeout' => 5,
                     'timeout' => 5
