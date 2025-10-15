@@ -53,7 +53,7 @@ class ExternalWeatherService
     {
         // Check if API key is configured
         if (empty($this->apiKey)) {
-            $this->logger->warning('OpenWeatherMap API key not configured, using fallback');
+            // API key not configured, using fallback (no log needed)
             return $this->fallbackService->getWeatherForCity($city);
         }
 
@@ -74,29 +74,18 @@ class ExternalWeatherService
 
             $mappedData = $this->mapOpenWeatherData($data, $city);
 
-            $this->logger->info('Successfully fetched weather data from OpenWeatherMap', [
-                'city' => $city,
-                'temperature' => $mappedData['temperature'],
-                'condition' => $mappedData['condition']
-            ]);
+            // Weather data fetched successfully (no log needed)
 
             return $mappedData;
 
         } catch (RequestException $e) {
-            $this->logger->error('OpenWeatherMap API request failed', [
-                'city' => $city,
-                'error' => $e->getMessage(),
-                'status_code' => $e->getResponse()?->getStatusCode()
-            ]);
+            // OpenWeatherMap API request failed, using fallback
 
             // Fallback to random data
             return $this->getFallbackData($city);
 
         } catch (\Exception $e) {
-            $this->logger->error('Error processing OpenWeatherMap response', [
-                'city' => $city,
-                'error' => $e->getMessage()
-            ]);
+            // Error processing OpenWeatherMap response, using fallback
 
             // Fallback to random data
             return $this->getFallbackData($city);
@@ -127,7 +116,7 @@ class ExternalWeatherService
 
     private function getFallbackData(string $city): array
     {
-        $this->logger->info('Using fallback weather data', ['city' => $city]);
+        // Using fallback weather data
         return $this->fallbackService->getWeatherForCity($city);
     }
 }

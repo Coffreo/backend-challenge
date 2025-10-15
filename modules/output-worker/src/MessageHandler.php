@@ -49,33 +49,10 @@ class MessageHandler implements IRabbitMqMessageHandler
     public function consume(string $payload, array $properties): bool
     {
         try {
-            $data = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+            $this->logger->info("[challenge-pipeline] Step 5/5: Final result ready");
 
-            $capital = $data['capital'];
-            $country = $data['country'];
-            $weather = $data['weather'];
-
-            $output = sprintf(
-                "FINAL RESULT: %s (capital of %s)\n" .
-                "Temperature: %d°C\n" .
-                "Condition: %s\n" .
-                "Humidity: %d%%\n" .
-                "Wind Speed: %d km/h\n" .
-                "Timestamp: %s",
-                $capital,
-                $country,
-                $weather['temperature'],
-                $weather['condition'],
-                $weather['humidity'],
-                $weather['wind_speed'],
-                $weather['timestamp']
-            );
-
-            // Log the formatted result
-            $this->logger->info($output);
-
-            // Also log the raw JSON for debugging purposes
-            $this->logger->debug('Raw weather data: ' . $payload);
+            // Log pipeline result
+            $this->logger->info("[challenge-pipeline] End: Pipeline completed successfully {$payload}");
 
             return true;
         } catch (\Exception $e) {

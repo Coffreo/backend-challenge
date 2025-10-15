@@ -124,10 +124,14 @@ class MessageHandler implements IRabbitMqMessageHandler
     {
         if ($this->normalizedCountry === null) return false;
 
+        $this->logger->info("Processing country: {$this->countryName}");
+
         /** @var string | null */
         $capital = self::$poorManCache[$this->normalizedCountry] ?? null;
 
         if ($capital !== null) {
+            $this->logger->info("[challenge-pipeline] Step 2/5: Country found -> capital: {$capital}");
+            $this->logger->info("Found capital {$capital} in cache for {$this->countryName}");
             $this->publishCapital($capital);
             $this->sendProcessingResult(true);
             return true;
@@ -148,7 +152,7 @@ class MessageHandler implements IRabbitMqMessageHandler
 
             $statusCode = $e->getResponse()?->getStatusCode() ?? null;
 
-            $this->logger->warning(
+            $this->logger->info(
                 'API has returned code error ' . ($statusCode) .
                     ' for value "' . ($this->normalizedCountry)
             );
@@ -167,6 +171,7 @@ class MessageHandler implements IRabbitMqMessageHandler
             // One particular case, though, would be having a 429 HTTP Error (Too Many Request).
             // As we may consider multiple pods running, we may put in a Redis a
             // dynamic slow down.
+            $this->logger->info("API lookup failed for {$this->countryName}, sending failure response");
             $this->sendProcessingResult(false);
             return false;
         }
@@ -184,6 +189,8 @@ class MessageHandler implements IRabbitMqMessageHandler
 
         self::$poorManCache[$this->normalizedCountry] = $capital;
 
+        $this->logger->info("[challenge-pipeline] Step 2/5: Country found -> capital: {$capital}");
+        $this->logger->info("API lookup successful: {$this->countryName} → {$capital}");
         $this->publishCapital($capital);
         $this->sendProcessingResult(true);
 
@@ -205,6 +212,7 @@ class MessageHandler implements IRabbitMqMessageHandler
                 'country' => $this->countryName
             ];
 
+            $this->logger->info("Publishing to capitals queue: {$capital} (country: {$this->countryName})");
             (new RabbitMqPublisher($this->rabbitMqConnection, $this->logger))
                 ->publish(QUEUE_OUT, json_encode($message));
         } catch (\Exception $e) {

@@ -35,15 +35,12 @@ $weatherController = new WeatherController($weatherService, $externalWeatherServ
 
 if ($requestMethod === 'GET') {
     if ($path === '/health') {
-        $logger->debug('Health check requested');
         $weatherController->health();
     } elseif (preg_match('#^/api/weather/external/(.+)$#', $path, $matches)) {
         $city = urldecode($matches[1]);
-        $logger->info('External weather data requested', ['city' => $city]);
         $weatherController->getExternalWeather($city);
     } elseif (preg_match('#^/api/weather/(.+)$#', $path, $matches)) {
         $city = urldecode($matches[1]);
-        $logger->info('Weather data requested', ['city' => $city]);
         $weatherController->getWeather($city);
     } else {
         $logger->warning('Not found', ['path' => $path, 'method' => $requestMethod]);

@@ -83,6 +83,9 @@ class MessageHandler implements IRabbitMqMessageHandler
             return false;
         }
 
+        $this->logger->info("[challenge-pipeline] Step 4/5: Fetching weather data");
+        $this->logger->info("Processing capital: {$this->capital} (country: {$this->country})");
+
         /** @var ResponseInterface | null */
         $response = null;
 
@@ -98,7 +101,7 @@ class MessageHandler implements IRabbitMqMessageHandler
 
             $statusCode = $e->getResponse()?->getStatusCode() ?? null;
 
-            $this->logger->warning(
+            $this->logger->info(
                 'Weather API has returned code error ' . ($statusCode) .
                     ' for capital "' . ($this->capital) . '"'
             );
@@ -130,6 +133,7 @@ class MessageHandler implements IRabbitMqMessageHandler
             'weather' => $weatherData
         ];
 
+        $this->logger->info("Weather API success for {$this->capital}: {$weatherData['temperature']}°C, {$weatherData['condition']}");
         $this->publishWeatherResult($enrichedMessage);
 
         return true;
@@ -145,6 +149,7 @@ class MessageHandler implements IRabbitMqMessageHandler
     public function publishWeatherResult(array $message): void
     {
         try {
+            $this->logger->info("Publishing enriched data to weather_results queue");
             (new RabbitMqPublisher($this->rabbitMqConnection, $this->logger))
                 ->publish(QUEUE_OUT, json_encode($message));
         } catch (\Exception $e) {

@@ -25,7 +25,6 @@ class MessageHandler implements IRabbitMqMessageHandler
     /** @var string|null Current correlation ID for RPC tracking */
     protected $correlationId;
 
-
     /** @var LoggerInterface */
     protected $logger;
 
@@ -95,9 +94,10 @@ class MessageHandler implements IRabbitMqMessageHandler
         try {
             $this->correlationId = uniqid('input-worker-', true);
 
-            $this->logger->info("Routing value '{$this->value}' to countries queue", [
-                'correlation_id' => $this->correlationId
-            ]);
+            $input = json_encode(['value' => $this->value]);
+            $this->logger->info("[challenge-pipeline] Starting: input received {$input}");
+            $this->logger->info("[challenge-pipeline] Step 1/5: Routing to country lookup");
+            $this->logger->info("Routing '{$this->value}' to countries queue");
             $this->publishToCountries($this->value);
 
             $this->waitForCountryResponse($this->value);
@@ -154,11 +154,7 @@ class MessageHandler implements IRabbitMqMessageHandler
     {
         $timeout = 10;
 
-        $this->logger->info("Waiting for country worker response with timeout", [
-            'correlation_id' => $this->correlationId,
-            'value' => $originalValue,
-            'timeout' => $timeout
-        ]);
+        $this->logger->info("Waiting for country worker response (timeout: {$timeout}s)");
 
         $responseHandler = new CountryResponseHandler($this->correlationId, $this, $this->logger);
 
@@ -169,9 +165,7 @@ class MessageHandler implements IRabbitMqMessageHandler
             $consumer->listen(QUEUE_COUNTRIES_RESPONSES, $responseHandler, $timeout);
 
         } catch (\Exception $e) {
-            $this->logger->error('Error while waiting for country worker response: ' . $e->getMessage(), [
-                'correlation_id' => $this->correlationId
-            ]);
+            $this->logger->error('Error waiting for response: ' . $e->getMessage());
 
         }
     }
@@ -183,6 +177,7 @@ class MessageHandler implements IRabbitMqMessageHandler
      */
     public function republishToCapitals(string $value): void
     {
+        $this->logger->info("[challenge-pipeline] Step 2/5: Country not found -> using value as capital");
         $this->logger->info("Country lookup failed for '{$value}', republishing to capitals queue");
         $this->publishToCapitals($value);
     }

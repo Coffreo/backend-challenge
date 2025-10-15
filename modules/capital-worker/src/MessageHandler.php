@@ -41,13 +41,15 @@ class MessageHandler implements IRabbitMqMessageHandler
         try {
             $data = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
 
+            $this->logger->info("[challenge-pipeline] Step 3/5: Processing capital");
+            $this->logger->info("Processing capital: {$data['capital']}");
+
             // Ensure we have both capital and country for weather-worker
             $processedData = [
                 'capital' => $data['capital'],
                 'country' => $data['country'] ?? 'Unknown', // Default to Unknown if country not provided
                 'processed' => true
-            ];
-
+            ];;
             // Publish to capitals_processed queue
             (new RabbitMqPublisher($this->rabbitMqConnection, $this->logger))
                 ->publish(QUEUE_OUT, json_encode($processedData));
