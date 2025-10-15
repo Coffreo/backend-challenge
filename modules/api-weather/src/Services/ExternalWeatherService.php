@@ -9,6 +9,9 @@ use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * Fetches weather data from OpenWeatherMap API with fallback to random data.
+ */
 class ExternalWeatherService
 {
     private Client $httpClient;
@@ -49,6 +52,12 @@ class ExternalWeatherService
         ]);
     }
 
+    /**
+     * Fetches weather data for a city from OpenWeatherMap API or returns random data as fallback.
+     *
+     * @param string $city The city name
+     * @return array Weather data with city, temperature, condition, humidity, wind_speed and timestamp
+     */
     public function getWeatherForCity(string $city): array
     {
         // Check if API key is configured
@@ -113,6 +122,13 @@ class ExternalWeatherService
         }
     }
 
+    /**
+     * Maps OpenWeatherMap API response to our standard format.
+     *
+     * @param array $data Raw API response data
+     * @param string $city The city name
+     * @return array Formatted weather data
+     */
     private function mapOpenWeatherData(array $data, string $city): array
     {
         $temperature = (int) round($data['main']['temp']);
@@ -130,6 +146,12 @@ class ExternalWeatherService
         ];
     }
 
+    /**
+     * Maps OpenWeatherMap weather condition to our standard format.
+     *
+     * @param string $openWeatherCondition The condition from OpenWeatherMap API
+     * @return string Mapped condition (sunny, cloudy, rainy, snowy, stormy)
+     */
     private function mapCondition(string $openWeatherCondition): string
     {
         return self::CONDITION_MAPPING[$openWeatherCondition] ?? 'cloudy';

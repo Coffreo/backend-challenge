@@ -7,6 +7,9 @@ namespace App\Services;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * Generates random weather data for testing purposes.
+ */
 class WeatherService
 {
     private const CONDITIONS = ['sunny', 'cloudy', 'rainy', 'snowy', 'stormy'];
@@ -17,6 +20,12 @@ class WeatherService
         $this->logger = $logger ?: new NullLogger();
     }
     
+    /**
+     * Generates random weather data for a city.
+     *
+     * @param string $city The city name
+     * @return array Weather data with city, temperature, condition, humidity, wind_speed and timestamp
+     */
     public function getWeatherForCity(string $city): array
     {
         $weatherData = [

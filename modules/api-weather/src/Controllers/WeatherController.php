@@ -7,6 +7,9 @@ namespace App\Controllers;
 use App\Services\WeatherService;
 use App\Services\ExternalWeatherService;
 
+/**
+ * Handles weather API endpoints and health checks.
+ */
 class WeatherController
 {
     private WeatherService $weatherService;
@@ -18,6 +21,11 @@ class WeatherController
         $this->externalWeatherService = $externalWeatherService ?: new ExternalWeatherService();
     }
 
+    /**
+     * Returns random weather data for a given city.
+     *
+     * @param string $city The city name
+     */
     public function getWeather(string $city): void
     {
         header('Content-Type: application/json');
@@ -26,6 +34,11 @@ class WeatherController
         echo json_encode($weatherData);
     }
 
+    /**
+     * Returns weather data from external API with fallback to random data.
+     *
+     * @param string $city The city name
+     */
     public function getExternalWeather(string $city): void
     {
         header('Content-Type: application/json');
@@ -34,6 +47,9 @@ class WeatherController
         echo json_encode($weatherData);
     }
 
+    /**
+     * Health check endpoint.
+     */
     public function health(): void
     {
         header('Content-Type: application/json');

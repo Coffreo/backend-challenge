@@ -25,7 +25,7 @@ input-worker → country-worker → capital-worker → weather-worker → output
 
 ### 1. Créer une API météo (api-weather)
 
-**Technologies** : PHP (framework Symfony autorisé)
+**Technologies** : PHP (framework Symfony autorisé) 
 
 **Endpoints à implémenter** :
 
@@ -165,7 +165,7 @@ modules/
 
 Ajouter les nouveaux services dans `docker-compose.dev.yml` pour :
 - input-worker
-- weather-worker
+- weather-worker  
 - output-worker
 - api-weather (port 8080)
 
@@ -200,7 +200,6 @@ L'environnement de développement offre plusieurs avantages :
 - **Hot Reload automatique** : Les workers redémarrent automatiquement via `watchexec` lors de modifications des fichiers PHP dans `src/`
 - **Volumes partagés** : Les modifications sur l'host sont immédiatement propagées dans les containers
 - **Vendor persistant** : Les dépendances composer installées dans le container sont accessibles depuis l'host
-- **Devcontainer** : Un environnement dockerisé prêt à l'emploi pour développer confortablement
 
 ### Mise à jour des packages partagés
 
